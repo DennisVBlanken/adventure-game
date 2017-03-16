@@ -10,6 +10,9 @@ button{
 	padding: 10px;
 	margin: 10px;
 }
+#option4{
+	display: none;
+}
 section#level_title{
 	padding: 10px;
 }
