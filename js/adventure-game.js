@@ -1,26 +1,29 @@
 
 // *some variables*
 
-var opt1 = document.getElementById('option1') 
+var opt1 = document.getElementById('option1');
 opt1.innerHTML = 'Start';
-var opt2 = document.getElementById('option2')
+var opt2 = document.getElementById('option2');
 opt2.innerHTML = 'Start?';
-var opt3 = document.getElementById('option3')
+var opt3 = document.getElementById('option3');
 opt3.innerHTML = 'Start!';
-var opt4 = document.getElementById('option4')
+var opt4 = document.getElementById('option4');
+var goldCounter = document.getElementById('goldCounter');
+var playerHealthBar = document.getElementById('playerHealthBar');
+var levelImg = document.getElementById('level_image');
 
-var levelImg = document.getElementById('level_image')
+var levelText = document.getElementById('level_text');
 
-var levelText = document.getElementById('level_text')
+var textTop = document.getElementById('level_title');
 
-var textTop = document.getElementById('level_title')
-
+var playerHealth = 100;
+var maxHealth = 100;
 //status of the onetime only events.
 var state = 1;
 var jumpState = 1;
 
 var luck = Math.floor((Math.random() * 100) + 1);
-
+console.log(luck)
 textTop.innerHTML = 'Start het spel';
 // an array of the items the player can get in the game.
 var inventory = {
@@ -38,6 +41,7 @@ function reset(){
 	level1();
 	inventory["dungeonKey"] = false;
 	gold = 0;
+	goldCounter.innerHTML = "Gold: " + gold
 	opt1.style = "display: ;";
 	opt2.style = "display: ;";
 	opt3.style = "display: ;";
@@ -53,22 +57,42 @@ function death(){
 	textTop.innerHTML = "";
 	levelImg.src = "Level Images/DeathScreen.jpg";
 	if(level_image && level_image.style) {
-    level_image.style.width = '900px';
+    level_image.style.width = '700px';
 	}
 }
 //Used to add gold to the variable
 function getGold(a){
 	gold = gold + a
+	goldCounter.innerHTML = "Gold: " + gold
 	return gold
 }
 //Used to remove gold from the variable
 function payGold(a){
 	gold = gold - a
+	goldCounter.innerHTML = "Gold: " + gold
 	return gold
 }
 //Used to make item variables True
 function getItem(a){
 	inventory[a] = true;
+}
+//Used to add health to the variable
+function getHealth(a){
+	playerHealth = playerHealth + a;
+	playerHealthBar.innerHTML = "HP: " +  playerHealth;
+	if (playerHealth > 100) {playerHealth = maxHealth;}
+	return playerHealth
+}
+//Used to remove health from the variable
+function loseHealth(a){
+	if (inventory["armor"] === false) {
+	playerHealth = playerHealth - a;
+	playerHealthBar.innerHTML = "HP: " +  playerHealth;}
+	else {
+	playerHealth = playerHealth - Number(a - 2);
+	playerHealthBar.innerHTML = "HP: " +  playerHealth;}
+	if (playerHealth < 1) {death();}
+	return playerHealth
 }
 //Island lvl
 function level1(){
@@ -143,7 +167,7 @@ function Shop(){
 		else { opt3.innerHTML = "*SOLD*";}
 	opt4.style.display = "inline-block";
 	opt4.innerHTML = "Leave the shop"
-	levelImg.src = "Level Images/.png";
+	levelImg.src = "Level Images/ShopWindow.png";
 	textTop.innerHTML = "The shop";
 	opt1.onclick = function(){ if(gold >= 60){getItem("armor"); payGold(60); alert("You bought some armor"); Shop()}
 		else{alert("You do not have enough gold.")}};
@@ -181,6 +205,5 @@ function level4(){
 	opt2.onclick = function(){ };
 	opt3.onclick = function(){ };
 	if(level_image && level_image.style) {
-    level_image.style.width = '500px';}
+    level_image.style.width = '500px';} 
 }
-
