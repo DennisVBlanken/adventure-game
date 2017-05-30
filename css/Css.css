@@ -70,18 +70,17 @@ span{
 	border: solid 4px black;
 	border-radius: 15px;
 	width: 110px;
-	height: 50px;
+	height: 130px;
 	position: relative;
 	left: 50px;
 	float: left;
 	background-color: lightgrey;
 	font-family: "Arial Black", Gadget, sans-serif;
 }
-#goldCounter{
+b{
 	padding-left: 10px;
-}
-#playerHealthBar{
-	padding-left: 10px;
+	position: relative;
+	top: 3px;
 }
 #Mini-Game{
 	margin-top: 580px;

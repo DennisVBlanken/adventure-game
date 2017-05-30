@@ -10,6 +10,8 @@ opt3.innerHTML = 'Start!';
 var opt4 = document.getElementById('option4');
 var goldCounter = document.getElementById('goldCounter');
 var playerHealthBar = document.getElementById('playerHealthBar');
+var weapon = document.getElementById('weapon');
+var luckCounter = document.getElementById('luck')
 var levelImg = document.getElementById('level_image');
 
 var levelText = document.getElementById('level_text');
@@ -19,11 +21,13 @@ var textTop = document.getElementById('level_title');
 var playerHealth = 100;
 var maxHealth = 100;
 //status of the onetime only events.
+var fight1 = 0;
 var state = 1;
 var jumpState = 1;
 
 var luck = Math.floor((Math.random() * 100) + 1);
-console.log(luck)
+luckCounter.innerHTML = "Luck: " + luck;
+
 textTop.innerHTML = 'Start het spel';
 // an array of the items the player can get in the game.
 var inventory = {
@@ -38,23 +42,27 @@ var gold = 0
 // *all the functions*
 //Used to reset the game
 function reset(){
+	console.log("reset")
 	level1();
 	inventory["dungeonKey"] = false;
 	gold = 0;
-	goldCounter.innerHTML = "Gold: " + gold
-	opt1.style = "display: ;";
-	opt2.style = "display: ;";
-	opt3.style = "display: ;";
+	goldCounter.innerHTML = "Gold: " + gold;
+	opt1.style.display = "inline-block";
+	opt2.style.display = "inline-block";
+	opt3.style.display = "inline-block";
+	opt4.style.display = "none";
 	luck = Math.floor((Math.random() * 100) + 1);
 	jumpState = 1;
 	alert("Try again!");
 }
 //Used to show the player died/failed
 function death(){
-	opt1.style = "display: none;";
-	opt2.style = "display: none;";
-	opt3.style = "display: none;";
+	console.log("death")
+	opt1.style.display = "none";
+	opt2.style.display = "none";
+	opt3.style.display = "none";
 	textTop.innerHTML = "";
+	opt4.style.display = "none";
 	levelImg.src = "Level Images/DeathScreen.jpg";
 	if(level_image && level_image.style) {
     level_image.style.width = '700px';
@@ -79,8 +87,8 @@ function getItem(a){
 //Used to add health to the variable
 function getHealth(a){
 	playerHealth = playerHealth + a;
+	if (playerHealth >= maxHealth) {playerHealth = maxHealth;}
 	playerHealthBar.innerHTML = "HP: " +  playerHealth;
-	if (playerHealth > 100) {playerHealth = maxHealth;}
 	return playerHealth
 }
 //Used to remove health from the variable
@@ -96,6 +104,7 @@ function loseHealth(a){
 }
 //Island lvl
 function level1(){
+	console.log("level-1")
 	opt1.innerHTML = "Enter the building";
 	opt2.innerHTML = "Search the island";
 	opt3.innerHTML = "Jump in the water";
@@ -113,6 +122,7 @@ function level1(){
 }
 //House lvl
 function level2(){
+	console.log("level-2")
 	opt1.innerHTML = "Check the bedroom";
 	opt2.innerHTML = "Go back outside";
 	opt3.innerHTML = "Take the staircase down";
@@ -120,13 +130,14 @@ function level2(){
 	textTop.innerHTML = "Living room";
 	opt1.onclick = function(){ if (state === 1) { alert("You found some gold under the bed."); getGold(50); state = 2;}
 		else alert("There is nothing else.")};
-	opt2.onclick = function(){ level1()};
-	opt3.onclick = function(){ level3()};
+	opt2.onclick = level1;
+	opt3.onclick = level3;
 	if(level_image && level_image.style) {
     level_image.style.width = '400px';}
 }
 //Dungeon lvl 1
 function level3(){
+	console.log("level-3")
 	var dungeonKey = inventory["dungeonKey"]
 	if (dungeonKey) {
 		opt1.innerHTML = "Go to the left";
@@ -134,9 +145,9 @@ function level3(){
 		opt3.innerHTML = "Go to the right";
 		levelImg.src = "Level Images/Dungeon1.png";
 		textTop.innerHTML = "Dungeon entrance";
-		opt1.onclick = function(){ level3A()};
-		opt2.onclick = function(){ level2()};
-		opt3.onclick = function(){ level4()};
+		opt1.onclick = level3A;
+		opt2.onclick = level2;
+		opt3.onclick = level4;
 		if(level_image && level_image.style) {
 	    level_image.style.width = '550px';}
 		} else {
@@ -145,23 +156,26 @@ function level3(){
 }
 //Dungeon lvl 2 (the shop)
 function level3A(){
+	console.log("level-3A")
 	opt1.innerHTML = "Buy some items";
 	opt2.innerHTML = "Go to the next room";
 	opt3.innerHTML = "Go back";
 	opt4.style.display = "none";
 	levelImg.src = "Level Images/Dungeon2.png";
 	textTop.innerHTML = "The shop";
-	opt1.onclick = function(){ Shop()};
-	opt2.onclick = function(){ level3B()};
-	opt3.onclick = function(){ level3()};
+	opt1.onclick = Shop;
+	opt2.onclick = function(){ if (fight1 === 1) { level3Bb();}else { level3Ba();}};
+	opt3.onclick = level3;
+	opt4.onclick = "";
 	if(level_image && level_image.style) {
     level_image.style.width = '450px';}
 }
 //The shop
 function Shop(){
+	console.log("the Shop")
 	if (inventory["armor"] === false) { opt1.innerHTML = "Buy some armor";}
 		else { opt1.innerHTML = "*SOLD*";}
-	if (inventory["sword"] === false) { opt2.innerHTML = "Buy a better weapon";}
+	if (inventory["sword"] === false) { opt2.innerHTML = "Buy a weapon";}
 		else { opt2.innerHTML = "*SOLD*";}
 	if (inventory["key"] === false) { opt3.innerHTML = "Buy the key";}
 		else { opt3.innerHTML = "*SOLD*";}
@@ -171,29 +185,47 @@ function Shop(){
 	textTop.innerHTML = "The shop";
 	opt1.onclick = function(){ if(gold >= 60){getItem("armor"); payGold(60); alert("You bought some armor"); Shop()}
 		else{alert("You do not have enough gold.")}};
-	opt2.onclick = function(){ if(gold >= 40){getItem("sword"); payGold(40); alert("You bought a better sword"); Shop()}
+	opt2.onclick = function(){ if(gold >= 40){getItem("sword"); payGold(40); alert("You bought a sword"); weapon.innerHTML = "Sword"; Shop()}
 		else{alert("You do not have enough gold.")}};
-	opt3.onclick = function(){ if(gold >= 50){getItem("key"); payGold(50); alert("You bought a key for a chest"); Shop()}
+	opt3.onclick = function(){ if(gold >= 50){getItem("key"); payGold(50); alert("You bought a key, but what is it for?"); Shop()}
 		else{alert("You do not have enough gold.")}};
 	opt4.onclick = function(){ level3A()};
 	if(level_image && level_image.style) {
     level_image.style.width = '450px';}
 }
 //Dungeon lvl 3
-function level3B(){
-	opt1.innerHTML = "";
-	opt2.innerHTML = "";
-	opt3.innerHTML = "";
+function level3Ba(){
+	console.log("level-3B")
+	opt1.innerHTML = "Fight";
+	opt2.innerHTML = "Try to steal the treasure";
+	opt3.innerHTML = "Go back";
 	levelImg.src = "Level Images/Dungeon3.png";
 	textTop.innerHTML = "";
-	opt1.onclick = function(){ };
-	opt2.onclick = function(){ };
-	opt3.onclick = function(){ };
+	opt1.onclick = function(){ if (inventory["sword"] === true) { if (inventory["armor"] === true) { loseHealth(40);} else {loseHealth(80);}
+	fight1 = 1; alert("You beat the monsters!"); level3Bb();}else {alert("You can't fight without a weapon...");}};
+	opt2.onclick = function(){ if (luck >= 90) { getGold(135); alert("You got the treasure without being noticed!");}
+	else { loseHealth(20); alert("You were unable to sneak by the monsters and got attacked!");}};
+	opt3.onclick = level3A;
+	if(level_image && level_image.style) {
+    level_image.style.width = '700px';} 
+}
+//Dungeon lvl 3 after the fight
+function level3Bb(){
+	console.log("level-3B")
+	opt1.innerHTML = "Drink from the fountain";
+	opt2.innerHTML = "Take the treasure";
+	opt3.innerHTML = "Go back";
+	levelImg.src = "Level Images/Dungeon3b.png";
+	textTop.innerHTML = "";
+	opt1.onclick = function(){ getHealth(100);};
+	opt2.onclick = function(){ getGold(135);};
+	opt3.onclick = level3A;
 	if(level_image && level_image.style) {
     level_image.style.width = '700px';} 
 }
 //Dungeon lvl 4
 function level4(){
+	console.log("level-4")
 	opt1.innerHTML = "";
 	opt2.innerHTML = "";
 	opt3.innerHTML = "";

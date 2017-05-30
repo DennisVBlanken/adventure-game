@@ -1,0 +1,23 @@
+span{
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border: solid 2px black;
+	margin: 10px;
+	background-color: grey;
+}
+button{
+	margin: 10px;
+	padding: 5px;
+	font-weight: bolder;
+}
+.wall{
+	background-color: black; 
+}
+#slot5-5{
+	background-color: green;
+}
+#outline{
+	border: solid 2px black;
+	width: 430px;
+}
