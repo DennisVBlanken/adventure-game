@@ -21,6 +21,8 @@ var textTop = document.getElementById('level_title');
 var playerHealth = 100;
 var maxHealth = 100;
 //status of the onetime only events.
+var treasureGet = 0;
+var fountainGet = 0;
 var fight1 = 0;
 var state = 1;
 var jumpState = 1;
@@ -52,6 +54,7 @@ function reset(){
 	opt3.style.display = "inline-block";
 	opt4.style.display = "none";
 	luck = Math.floor((Math.random() * 100) + 1);
+	luckCounter.innerHTML = "Luck: " + luck;
 	jumpState = 1;
 	alert("Try again!");
 }
@@ -63,6 +66,8 @@ function death(){
 	opt3.style.display = "none";
 	textTop.innerHTML = "";
 	opt4.style.display = "none";
+	luck = Math.floor((Math.random() * 100) + 1);
+	luckCounter.innerHTML = "Luck: " + luck;
 	levelImg.src = "Level Images/DeathScreen.jpg";
 	if(level_image && level_image.style) {
     level_image.style.width = '700px';
@@ -128,8 +133,8 @@ function level2(){
 	opt3.innerHTML = "Take the staircase down";
 	levelImg.src = "Level Images/Het-huis.png";
 	textTop.innerHTML = "Living room";
-	opt1.onclick = function(){ if (state === 1) { alert("You found some gold under the bed."); getGold(50); state = 2;}
-		else alert("There is nothing else.")};
+	opt1.onclick = function(){ if (state === 1) { if (luck >= 20) { alert("You found some gold under the bed."); getGold(50); state = 2;}}
+		alert("There is nothing else.")};
 	opt2.onclick = level1;
 	opt3.onclick = level3;
 	if(level_image && level_image.style) {
@@ -217,8 +222,10 @@ function level3Bb(){
 	opt3.innerHTML = "Go back";
 	levelImg.src = "Level Images/Dungeon3b.png";
 	textTop.innerHTML = "";
-	opt1.onclick = function(){ getHealth(100);};
-	opt2.onclick = function(){ getGold(135);};
+	opt1.onclick = function(){ if (fountainGet == 0) { fountainGet = 1; getHealth(100);}
+	else alert("You can't use it again.")};
+	opt2.onclick = function(){ if (treasureGet == 0) { treasureGet = 1; getGold(135);}
+	else alert("There is no treasure left.")};
 	opt3.onclick = level3A;
 	if(level_image && level_image.style) {
     level_image.style.width = '700px';} 
@@ -236,6 +243,7 @@ function level4(){
 	opt1.onclick = function(){ };
 	opt2.onclick = function(){ };
 	opt3.onclick = function(){ };
+	opt4.onclick = function(){ };
 	if(level_image && level_image.style) {
     level_image.style.width = '500px';} 
 }
